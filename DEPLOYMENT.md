@@ -131,3 +131,76 @@ All pre-seeded demo accounts share the password: `password123`
 | **STUDENT** | Diya Sen | `diya.student@eventease.srmist.edu.in` | `password123` |
 | **STUDENT** | Rohan Verma | `rohan.student@eventease.srmist.edu.in` | `password123` |
 | **STUDENT** | Sneha Krishnan | `sneha.student@eventease.srmist.edu.in` | `password123` |
+
+---
+
+## 6. Frontend Deployment to GitHub Pages
+
+GitHub Pages serves static HTML, CSS, and client-side JavaScript. It cannot run the Java Spring Boot backend, Notification microservice, or MySQL database.
+
+### Automated Deployment via GitHub Actions
+The repository includes a pre-configured workflow at `.github/workflows/deploy.yml`.
+
+1. **Enable GitHub Actions Pages in Repository Settings:**
+   - In GitHub, go to **Settings** > **Pages**.
+   - Under **Build and deployment** > **Source**, select **GitHub Actions** (do NOT select "Deploy from a branch").
+2. **Push to Main / Master Branch:**
+   ```bash
+   git add .
+   git commit -m "Deploy EventEase frontend to GitHub Pages"
+   git push origin master # (or main)
+   ```
+3. **Automated Pipeline Actions:**
+   - Detects the push and triggers `.github/workflows/deploy.yml`.
+   - Checks out the code and sets up Node.js 20.
+   - Sets `VITE_BASE_PATH: /EventEase/`.
+   - Runs `npm run build` inside `./frontend`.
+   - Generates client-side routing fallback (`404.html`) to prevent white screens on deep link reloads.
+   - Publishes the `frontend/dist` bundle to:  
+     `https://darshana-ganesh006.github.io/EventEase/`
+
+---
+
+## 7. Online Full-Stack Deployment: Cloud Backend & MySQL
+
+To allow online users to log in, register, and manage live database records over the public internet, deploy the backend and database separately to a cloud provider.
+
+### Step 1: Deploy MySQL Database (e.g., Aiven, Railway, or Render)
+1. Create a MySQL 8.x database instance on a cloud provider (e.g., [Aiven](https://aiven.io), [Railway](https://railway.app), or [Render](https://render.com)).
+2. Note your connection details:
+   - Host (`DB_HOST`)
+   - Port (`DB_PORT`, default: 3306)
+   - Database name (`DB_NAME`, e.g., `eventease_db`)
+   - Username (`DB_USERNAME`)
+   - Password (`DB_PASSWORD`)
+3. Connect via MySQL Workbench or command line and execute:
+   - `database/schema.sql` (to create tables, constraints, and indexes)
+   - `database/seed.sql` (to seed demonstration faculty, students, and events)
+
+### Step 2: Deploy Spring Boot Backend (e.g., Render, Railway, or Fly.io)
+1. Create a Web Service pointing to the `backend/` directory of your repository.
+2. Build command:
+   ```bash
+   ./mvnw clean package -DskipTests
+   ```
+3. Start command:
+   ```bash
+   java -jar target/backend-1.0.0.jar
+   ```
+4. Set the following Environment Variables in the cloud provider's dashboard:
+   - `SPRING_PROFILES_ACTIVE`: `mysql`
+   - `DB_HOST`: `<your-cloud-mysql-host>`
+   - `DB_PORT`: `3306`
+   - `DB_NAME`: `eventease_db`
+   - `DB_USERNAME`: `<your-cloud-mysql-username>`
+   - `DB_PASSWORD`: `<your-cloud-mysql-password>`
+   - `JWT_SECRET`: `<your-secure-256-bit-hex-secret>`
+   - `CORS_ALLOWED_ORIGINS`: `https://darshana-ganesh006.github.io,http://localhost:5173`
+5. Note your public backend URL once deployed (e.g., `https://eventease-api.onrender.com/api`).
+
+### Step 3: Connect GitHub Pages Frontend to Cloud Backend
+1. In your GitHub repository, go to **Settings** > **Secrets and variables** > **Actions**.
+2. Click **New repository secret**.
+3. Name: `VITE_API_BASE_URL`
+4. Value: `https://eventease-api.onrender.com/api` (replace with your actual backend URL).
+5. Re-run the deployment workflow in the **Actions** tab. The frontend will now communicate directly with your live cloud backend and database!
