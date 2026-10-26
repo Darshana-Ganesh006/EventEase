@@ -1,3 +1,4 @@
+<<<<<<< HEAD
 # Operating System Files
 .DS_Store
 Thumbs.db
@@ -15,10 +16,16 @@ node_modules/
 dist/
 dist-ssr/
 *.local
+=======
+# Logs
+logs
+*.log
+>>>>>>> ba0d72df6b9b1d927d98aecf97663128eaa06eb7
 npm-debug.log*
 yarn-debug.log*
 yarn-error.log*
 pnpm-debug.log*
+<<<<<<< HEAD
 
 # Java / Maven
 target/
@@ -38,11 +45,26 @@ hs_err_pid*
 *.iws
 *.ipr
 .vscode/
+=======
+lerna-debug.log*
+
+node_modules
+dist
+dist-ssr
+*.local
+
+# Editor directories and files
+.vscode/*
+!.vscode/extensions.json
+.idea
+.DS_Store
+>>>>>>> ba0d72df6b9b1d927d98aecf97663128eaa06eb7
 *.suo
 *.ntvs*
 *.njsproj
 *.sln
 *.sw?
+<<<<<<< HEAD
 .classpath
 .project
 .settings/
@@ -65,3 +87,5 @@ frontend/.env.*.local
 # Scratch and Temporary test scripts
 scratch/
 
+=======
+>>>>>>> ba0d72df6b9b1d927d98aecf97663128eaa06eb7
